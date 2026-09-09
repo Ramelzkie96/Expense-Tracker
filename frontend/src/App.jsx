@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import TransactionExpenses from "./pages/TransactionExpenses";
 import TransactionIncome from "./pages/TransactionIncome";
+import Budgets from "./pages/Budgets";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
           path="/transactions/income"
           element={<TransactionIncome />}
         />
+
+        {/* Budget */}
+        <Route path="/budgets" element={<Budgets />} />
       </Routes>
     </BrowserRouter>
   );
