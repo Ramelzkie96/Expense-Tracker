@@ -1,15 +1,4 @@
-import {
-  LayoutDashboard,
-  ArrowLeftRight,
-  WalletCards,
-  RefreshCw,
-  BarChart3,
-  CalendarDays,
-  FileText,
-  Settings,
-  ChevronDown,
-  Wallet,
-} from "lucide-react";
+import {LayoutDashboard,ArrowLeftRight,WalletCards,RefreshCw,BarChart3,CalendarDays,FileText,Settings,ChevronDown,Wallet,} from "lucide-react";
 
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -43,11 +32,6 @@ const menuItems = [
     label: "Calendar",
     icon: CalendarDays,
     path: "/calendar",
-  },
-  {
-    label: "Reports",
-    icon: FileText,
-    path: "/reports",
   },
   {
     label: "Settings",

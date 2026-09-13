@@ -25,20 +25,6 @@ export default function TransactionIncome() {
 
   return (
     <DashboardLayout>
-      {/* Page heading */}
-      <div className="mb-6">
-        <h1 className="text-[26px] font-bold tracking-[-0.4px] text-slate-800">
-          Income
-        </h1>
-        <div className="mt-1 flex items-center gap-2 text-[13px] text-slate-500">
-          <span>Home</span>
-          <span className="text-slate-300">›</span>
-          <span>Transactions</span>
-          <span className="text-slate-300">›</span>
-          <span className="text-slate-700">Income</span>
-        </div>
-      </div>
-
       <div className="flex items-start gap-6">
         {/* Main column */}
         <div className="min-w-0 flex-1">

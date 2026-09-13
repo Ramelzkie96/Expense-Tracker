@@ -21,16 +21,6 @@ export default function Budgets() {
 
   return (
     <DashboardLayout>
-      {/* Page heading */}
-      <div className="mb-6">
-        <h1 className="text-[26px] font-bold tracking-[-0.4px] text-slate-800">
-          Budget
-        </h1>
-        <p className="mt-1 text-[13px] text-slate-500">
-          Set your spending limits and stay on track
-        </p>
-      </div>
-
       <div className="flex items-start gap-6">
         {/* Main column */}
         <div className="min-w-0 flex-1">
