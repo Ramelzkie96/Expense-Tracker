@@ -1,5 +1,6 @@
 import { Pencil, Mail, Phone, CalendarCheck, Camera } from "lucide-react";
 import { userProfile } from "../../data/settings";
+import profile from "../../assets/profile.jpg"
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -36,7 +37,7 @@ export default function ProfileInformationCard() {
         <div className="relative">
           <div className="h-16 w-16 overflow-hidden rounded-full bg-slate-200">
             <img
-              src={userProfile.avatarUrl}
+              src={profile}
               alt={userProfile.name}
               className="h-full w-full object-cover"
             />

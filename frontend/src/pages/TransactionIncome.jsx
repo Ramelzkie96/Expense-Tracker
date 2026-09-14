@@ -6,11 +6,13 @@ import TransactionsTable from "../components/transactions/TransactionsTable";
 import TransactionsPagination from "../components/transactions/TransactionsPagination";
 import TransactionsFilterPanel from "../components/transactions/TransactionsFilterPanel";
 import TransactionsSummaryPanel from "../components/transactions/TransactionsSummaryPanel";
+import AddTransactionModal from "../components/ui/transactions/AddTransactionModal";
 import { transactions } from "../data/transactions";
 
 export default function TransactionIncome() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const income = transactions.filter((t) => t.type === "Income");
 
@@ -23,6 +25,11 @@ export default function TransactionIncome() {
 
   const totalPages = 1;
 
+  const handleSaveTransaction = (formData) => {
+    // TODO: push formData into real transaction storage/state once wired to a backend
+    console.log("New income:", formData);
+  };
+
   return (
     <DashboardLayout>
       <div className="flex items-start gap-6">
@@ -32,6 +39,8 @@ export default function TransactionIncome() {
             <TransactionsHeader
               title="All Income"
               subtitle="Track your earnings and cash inflows"
+              addButtonLabel="Add Income"
+              onAddTransaction={() => setIsModalOpen(true)}
             />
             <TransactionsToolbar search={search} onSearchChange={setSearch} />
             <TransactionsTable transactions={income} />
@@ -56,6 +65,13 @@ export default function TransactionIncome() {
           />
         </div>
       </div>
+
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTransaction}
+        lockedType="Income"
+      />
     </DashboardLayout>
   );
 }

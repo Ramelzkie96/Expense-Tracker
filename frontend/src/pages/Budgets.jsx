@@ -1,9 +1,11 @@
+import { useState } from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import BudgetOverviewCards from "../components/budgets/BudgetOverviewCards";
 import SpendingByCategoryCard from "../components/budgets/SpendingByCategoryCard";
 import BudgetCategoriesTable from "../components/budgets/BudgetCategoriesTable";
 import BudgetProgressCard from "../components/budgets/BudgetProgressCard";
 import RecentBudgetActivityCard from "../components/budgets/RecentBudgetActivityCard";
+import AddBudgetModal from "../components/ui/budgets/AddBudgetModal";
 import {
   budgetCategories,
   budgetSummary,
@@ -11,12 +13,15 @@ import {
 } from "../data/budgets";
 
 export default function Budgets() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const totalSpent = budgetCategories.reduce((sum, c) => sum + c.spent, 0);
   const remaining = budgetSummary.monthlyBudget - totalSpent;
   const spentPct = Math.round((totalSpent / budgetSummary.monthlyBudget) * 100);
 
-  const handleAddBudget = () => {
-    // wire up to a modal / form later
+  const handleSaveBudget = (formData) => {
+    // TODO: push formData into real budget storage/state once wired to a backend
+    console.log("New budget:", formData);
   };
 
   return (
@@ -39,7 +44,7 @@ export default function Budgets() {
 
           <BudgetCategoriesTable
             categories={budgetCategories}
-            onAddBudget={handleAddBudget}
+            onAddBudget={() => setIsModalOpen(true)}
           />
         </div>
 
@@ -53,6 +58,12 @@ export default function Budgets() {
           <RecentBudgetActivityCard activity={recentBudgetActivity} />
         </div>
       </div>
+
+      <AddBudgetModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveBudget}
+      />
     </DashboardLayout>
   );
 }

@@ -6,11 +6,13 @@ import TransactionsTable from "../components/transactions/TransactionsTable";
 import TransactionsPagination from "../components/transactions/TransactionsPagination";
 import TransactionsFilterPanel from "../components/transactions/TransactionsFilterPanel";
 import TransactionsSummaryPanel from "../components/transactions/TransactionsSummaryPanel";
+import AddTransactionModal from "../components/ui/transactions/AddTransactionModal";
 import { transactions } from "../data/transactions";
 
 export default function Transactions() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const totalPages = 6;
   const totalResults = 48;
 
@@ -23,13 +25,18 @@ export default function Transactions() {
   const netTotal = totalIncome - totalExpenses;
   const savedPct = totalIncome ? Math.round((netTotal / totalIncome) * 100) : 0;
 
+  const handleSaveTransaction = (formData) => {
+    // TODO: push formData into real transaction storage/state once wired to a backend
+    console.log("New transaction:", formData);
+  };
+
   return (
     <DashboardLayout>
       <div className="flex items-start gap-6">
         {/* Main column */}
         <div className="min-w-0 flex-1">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <TransactionsHeader />
+            <TransactionsHeader onAddTransaction={() => setIsModalOpen(true)} />
             <TransactionsToolbar search={search} onSearchChange={setSearch} />
             <TransactionsTable transactions={transactions} />
             <TransactionsPagination
@@ -53,6 +60,12 @@ export default function Transactions() {
           />
         </div>
       </div>
+
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTransaction}
+      />
     </DashboardLayout>
   );
 }

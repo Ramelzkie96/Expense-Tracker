@@ -17,7 +17,7 @@ export default function RecentTransactionsCard() {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="table-scrollbar overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-slate-100 text-left text-[12px] font-semibold text-slate-400">

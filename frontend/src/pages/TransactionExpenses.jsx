@@ -6,11 +6,13 @@ import TransactionsTable from "../components/transactions/TransactionsTable";
 import TransactionsPagination from "../components/transactions/TransactionsPagination";
 import TransactionsFilterPanel from "../components/transactions/TransactionsFilterPanel";
 import TransactionsSummaryPanel from "../components/transactions/TransactionsSummaryPanel";
+import AddTransactionModal from "../components/ui/transactions/AddTransactionModal";
 import { transactions } from "../data/transactions";
 
 export default function TransactionExpenses() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const expenses = transactions.filter((t) => t.type === "Expense");
 
@@ -23,6 +25,11 @@ export default function TransactionExpenses() {
 
   const totalPages = 1;
 
+  const handleSaveTransaction = (formData) => {
+    // TODO: push formData into real transaction storage/state once wired to a backend
+    console.log("New expense:", formData);
+  };
+
   return (
     <DashboardLayout>
       <div className="flex items-start gap-6">
@@ -32,6 +39,8 @@ export default function TransactionExpenses() {
             <TransactionsHeader
               title="All Expenses"
               subtitle="Track where your money is going"
+              addButtonLabel="Add Expense"
+              onAddTransaction={() => setIsModalOpen(true)}
             />
             <TransactionsToolbar search={search} onSearchChange={setSearch} />
             <TransactionsTable transactions={expenses} />
@@ -56,6 +65,13 @@ export default function TransactionExpenses() {
           />
         </div>
       </div>
+
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTransaction}
+        lockedType="Expense"
+      />
     </DashboardLayout>
   );
 }

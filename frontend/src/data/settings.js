@@ -21,6 +21,7 @@ export const userProfile = {
 export const quickActions = [
   {
     id: 1,
+    action: "export",
     icon: Download,
     iconBg: "bg-emerald-50",
     iconColor: "text-emerald-600",
@@ -29,6 +30,7 @@ export const quickActions = [
   },
   {
     id: 2,
+    action: "backup",
     icon: CloudUpload,
     iconBg: "bg-violet-50",
     iconColor: "text-violet-600",
@@ -37,6 +39,7 @@ export const quickActions = [
   },
   {
     id: 3,
+    action: "delete",
     icon: Trash2,
     iconBg: "bg-rose-50",
     iconColor: "text-rose-500",
@@ -45,6 +48,7 @@ export const quickActions = [
   },
   {
     id: 4,
+    action: "logout",
     icon: LogOut,
     iconBg: "bg-sky-50",
     iconColor: "text-sky-600",

@@ -6,6 +6,16 @@ import {
   Coffee,
   Ticket,
   Briefcase,
+  Zap,
+  Laptop,
+  Building2,
+  TrendingUp,
+  Gift,
+  PlusCircle,
+  Landmark,
+  CreditCard,
+  Wallet,
+  Banknote,
 } from "lucide-react";
 import gcash from "../assets/gcash.png";
 
@@ -155,3 +165,44 @@ export function formatPeso(amount) {
   });
   return `${amount < 0 ? "-" : "+"} ₱${abs}`;
 }
+
+// Category options split by transaction type, so the Add Transaction
+// modal only shows categories relevant to the selected type.
+export const expenseCategoryOptions = [
+  ...new Set(
+    transactions.filter((t) => t.type === "Expense").map((t) => t.category)
+  ),
+];
+
+export const incomeCategoryOptions = [
+  "Salary",
+  "Freelance",
+  "Business",
+  "Investment",
+  "Gift",
+  "Other Income",
+];
+
+export const categoryMeta = {
+  "Food & Dining": { icon: Utensils, iconBg: "bg-emerald-50", iconColor: "text-emerald-600" },
+  "Transportation": { icon: Car, iconBg: "bg-sky-50", iconColor: "text-sky-600" },
+  "Bills & Utilities": { icon: Zap, iconBg: "bg-orange-50", iconColor: "text-orange-600" },
+  "Entertainment": { icon: Ticket, iconBg: "bg-violet-50", iconColor: "text-violet-600" },
+  "Salary": { icon: Briefcase, iconBg: "bg-indigo-50", iconColor: "text-indigo-600" },
+  "Freelance": { icon: Laptop, iconBg: "bg-sky-50", iconColor: "text-sky-600" },
+  "Business": { icon: Building2, iconBg: "bg-amber-50", iconColor: "text-amber-600" },
+  "Investment": { icon: TrendingUp, iconBg: "bg-emerald-50", iconColor: "text-emerald-600" },
+  "Gift": { icon: Gift, iconBg: "bg-pink-50", iconColor: "text-pink-600" },
+  "Other Income": { icon: PlusCircle, iconBg: "bg-slate-100", iconColor: "text-slate-500" },
+};
+
+export const paymentMethodMeta = {
+  "GCash": { icon: gcash, isImage: true, iconBg: "bg-sky-50" },
+  "Bank Transfer": { icon: Landmark, iconBg: "bg-indigo-50", iconColor: "text-indigo-600" },
+  "GrabPay": { icon: Wallet, iconBg: "bg-emerald-50", iconColor: "text-emerald-600" },
+  "PayPal": { icon: CreditCard, iconBg: "bg-sky-50", iconColor: "text-sky-600" },
+  "Credit Card": { icon: CreditCard, iconBg: "bg-violet-50", iconColor: "text-violet-600" },
+  "Cash": { icon: Banknote, iconBg: "bg-amber-50", iconColor: "text-amber-600" },
+};
+
+export const paymentMethodOptions = [...new Set(transactions.map((t) => t.method))];

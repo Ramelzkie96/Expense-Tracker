@@ -34,3 +34,74 @@
 .sidebar-scrollbar:hover::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+
+/* Modal scrollbar */
+.modal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+/* Show scrollbar when hovering the modal */
+.modal-scrollbar:hover {
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Chrome, Edge, Safari */
+.modal-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.modal-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+.modal-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Table scrollbar (horizontal) */
+.table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+/* Show scrollbar when hovering the table */
+.table-scrollbar:hover {
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Chrome, Edge, Safari */
+.table-scrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.table-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+.table-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

@@ -1,4 +1,5 @@
 import {LayoutDashboard,ArrowLeftRight,WalletCards,RefreshCw,BarChart3,CalendarDays,FileText,Settings,ChevronDown,Wallet,} from "lucide-react";
+import profile from "../../assets/profile.jpg"
 
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -210,7 +211,7 @@ export default function Sidebar() {
         <div className="border-t border-slate-100 pt-4">
           <button className="flex w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors hover:bg-slate-50">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-200">
-              <img src="/images/profile.jpg" alt="Profile" className="h-full w-full object-cover" />
+              <img src={profile} alt="Profile" className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[12px] font-bold text-slate-800">Ramel Gulane</p>
