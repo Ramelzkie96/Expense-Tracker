@@ -1,7 +1,9 @@
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { usePendingToast } from "../../hooks/usePendingToast";
 
 export default function DashboardLayout({ children }) {
+  usePendingToast();
   return (
     <div className="min-h-screen bg-[#f8f9fc]">
       

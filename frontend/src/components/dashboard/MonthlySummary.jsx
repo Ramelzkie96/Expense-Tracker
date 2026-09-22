@@ -7,13 +7,14 @@ import {
   MoreHorizontal,
   ChevronDown,
 } from "lucide-react";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 const categories = [
   {
     name: "Food & Dining",
     amount: "₱6,120.00",
-    percentage: 37,
-    color: "bg-blue-600",
+    value: 37,
+    color: "#4f46e5",
     icon: ShoppingCart,
     iconBg: "bg-blue-100",
     iconColor: "text-blue-600",
@@ -21,8 +22,8 @@ const categories = [
   {
     name: "Transportation",
     amount: "₱3,800.00",
-    percentage: 23,
-    color: "bg-emerald-500",
+    value: 23,
+    color: "#10b981",
     icon: Car,
     iconBg: "bg-emerald-100",
     iconColor: "text-emerald-600",
@@ -30,8 +31,8 @@ const categories = [
   {
     name: "Bills & Utilities",
     amount: "₱2,480.00",
-    percentage: 15,
-    color: "bg-orange-500",
+    value: 15,
+    color: "#f97316",
     icon: Receipt,
     iconBg: "bg-orange-100",
     iconColor: "text-orange-500",
@@ -39,8 +40,8 @@ const categories = [
   {
     name: "Shopping",
     amount: "₱1,650.00",
-    percentage: 10,
-    color: "bg-purple-500",
+    value: 10,
+    color: "#a855f7",
     icon: ShoppingBag,
     iconBg: "bg-purple-100",
     iconColor: "text-purple-500",
@@ -48,8 +49,8 @@ const categories = [
   {
     name: "Entertainment",
     amount: "₱1,320.00",
-    percentage: 8,
-    color: "bg-red-500",
+    value: 8,
+    color: "#ef4444",
     icon: Tv,
     iconBg: "bg-red-100",
     iconColor: "text-red-500",
@@ -57,13 +58,35 @@ const categories = [
   {
     name: "Others",
     amount: "₱1,180.00",
-    percentage: 7,
-    color: "bg-cyan-500",
+    value: 7,
+    color: "#06b6d4",
     icon: MoreHorizontal,
     iconBg: "bg-cyan-100",
     iconColor: "text-cyan-500",
   },
 ];
+
+function CustomTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null;
+  const category = payload[0].payload;
+
+  return (
+    <div className="w-[160px] rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-md">
+      <div className="flex items-center gap-2">
+        <span
+          className="h-2.5 w-2.5 shrink-0 rounded-full"
+          style={{ backgroundColor: category.color }}
+        />
+        <p className="truncate text-[12.5px] font-semibold text-slate-700">
+          {category.name}
+        </p>
+      </div>
+      <p className="mt-1 text-[12px] text-slate-500">
+        {category.amount} · {category.value}%
+      </p>
+    </div>
+  );
+}
 
 export default function MonthlySummary() {
   return (
@@ -89,15 +112,39 @@ export default function MonthlySummary() {
 
         {/* Donut Chart */}
         <div className="flex shrink-0 justify-center lg:w-[48%]">
-          <div
-            className="relative flex h-56 w-56 items-center justify-center rounded-full"
-            style={{
-              background:
-                "conic-gradient(#4f46e5 0% 37%, #10b981 37% 60%, #f97316 60% 75%, #a855f7 75% 85%, #ef4444 85% 93%, #06b6d4 93% 100%)",
-            }}
-          >
+          <div className="relative flex h-56 w-56 items-center justify-center overflow-visible">
+            <PieChart width={224} height={224}>
+              <Pie
+                data={categories}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={64}
+                outerRadius={100}
+                paddingAngle={2}
+                startAngle={90}
+                endAngle={-270}
+                stroke="none"
+                isAnimationActive={true}
+                animationDuration={800}
+                animationEasing="ease-out"
+              >
+                {categories.map((category) => (
+                  <Cell key={category.name} fill={category.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={false}
+                position={{ x: 230, y: 70 }}
+                allowEscapeViewBox={{ x: true, y: true }}
+                wrapperStyle={{ zIndex: 20, pointerEvents: "none" }}
+              />
+            </PieChart>
+
             {/* White center */}
-            <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-white shadow-sm">
+            <div className="pointer-events-none absolute flex h-32 w-32 flex-col items-center justify-center rounded-full bg-white shadow-sm">
               <span className="text-xs text-slate-500">
                 Total Expenses
               </span>
@@ -142,7 +189,7 @@ export default function MonthlySummary() {
 
                 {/* Percentage */}
                 <span className="w-7 text-right text-xs text-slate-400">
-                  {category.percentage}%
+                  {category.value}%
                 </span>
               </div>
             );

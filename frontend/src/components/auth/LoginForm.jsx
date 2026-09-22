@@ -31,16 +31,29 @@ export default function LoginForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        toast.success("Welcome back!");
+        sessionStorage.setItem("toast:success", "Welcome back!");
         navigate("/");
       } else {
-        // Handles cases like requiring 2FA/email verification
         console.log("Sign in requires further steps:", result);
       }
     } catch (err) {
-      const message = err.errors?.[0]?.message ?? "Something went wrong. Please try again.";
-      setError(message);
-      toast.error(message);
+      const clerkError = err.errors?.[0];
+
+      // This specific error means the email exists but was created via an
+      // OAuth provider (e.g. Google), so it has no password to check against.
+      if (
+        clerkError?.code === "strategy_for_user_invalid" ||
+        clerkError?.message?.toLowerCase().includes("invalid verification strategy")
+      ) {
+        const friendlyMessage =
+          "This email is linked to a social account. Please use \"Continue with Google\" or \"Continue with GitHub\" to log in.";
+        setError(friendlyMessage);
+        toast.error(friendlyMessage);
+      } else {
+        const message = clerkError?.message ?? "Something went wrong. Please try again.";
+        setError(message);
+        toast.error(message);
+      }
     } finally {
       setIsSubmitting(false);
     }

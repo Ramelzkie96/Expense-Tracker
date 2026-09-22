@@ -12,6 +12,7 @@ import CalendarPage from "./pages/Calendar";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import SsoCallback from "./pages/SsoCallback";
 
 function ProtectedRoute({ children }) {
   return (
@@ -43,6 +44,7 @@ function App() {
         {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/sso-callback" element={<SsoCallback />} />
 
         {/* Dashboard */}
         <Route

@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useClerk } from "@clerk/clerk-react";
-import { toast } from "sonner";
 import { quickActions } from "../../data/settings";
 
 export default function QuickActionsCard() {
@@ -9,25 +8,30 @@ export default function QuickActionsCard() {
 
   const handleActionClick = async (action) => {
     switch (action) {
-      case "logout":
+      case "logout": {
+        // Write this FIRST, synchronously, before calling signOut() at all.
+        // signOut() triggers a full document reload to /login (confirmed
+        // via Network tab), which destroys all JS state — but sessionStorage
+        // survives a page reload, so as long as this line runs before the
+        // reload starts, the value will still be there once the new page loads.
+        sessionStorage.setItem("toast:success", "Logged out successfully.");
+
         try {
           await signOut();
-          toast.success("Logged out successfully.");
-          navigate("/login");
         } catch (err) {
-          toast.error("Failed to log out. Please try again.");
+          sessionStorage.setItem("toast:error", "Failed to log out. Please try again.");
+          sessionStorage.removeItem("toast:success");
+          navigate("/login");
         }
         break;
+      }
       case "export":
-        // TODO: wire up real export logic
         console.log("Export Data clicked");
         break;
       case "backup":
-        // TODO: wire up real backup logic
         console.log("Backup Data clicked");
         break;
       case "delete":
-        // TODO: wire up real delete-account logic (should confirm first!)
         console.log("Delete Account clicked");
         break;
       default:

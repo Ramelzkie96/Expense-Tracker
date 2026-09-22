@@ -35,11 +35,9 @@ export default function SocialAuthButtons({ dividerLabel = "Or continue with" })
       .authenticateWithRedirect({
         strategy,
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/?auth=success",
       })
       .catch(() => {
-        // If the redirect itself fails to kick off (e.g. rate limited),
-        // re-enable the buttons so the user can try again.
         setLoadingStrategy(null);
       });
   };

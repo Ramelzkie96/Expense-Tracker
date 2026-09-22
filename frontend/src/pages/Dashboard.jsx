@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
+  
   return (
     <DashboardLayout>
       <div className="space-y-6">
