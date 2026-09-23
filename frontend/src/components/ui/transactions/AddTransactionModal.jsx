@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { Wallet, Tag, CreditCard } from "lucide-react";
+import { Wallet } from "lucide-react";
+import { toast } from "sonner";
+import { useUser } from "@clerk/clerk-react";
 import Modal from "../Modal";
 import Input from "../Input";
-import IconDropdown from "../IconDropdown";
 import TransactionTypeToggle from "./TransactionTypeToggle";
-import {
-  expenseCategoryOptions,
-  incomeCategoryOptions,
-  paymentMethodOptions,
-  categoryMeta,
-  paymentMethodMeta,
-} from "../../../data/transactions";
+import CategoryDropdown from "./CategoryDropdown";
+import PaymentMethodDropdown from "./PaymentMethodDropdown";
+import { useSupabaseClient } from "../../../hooks/useSupabaseClient";
+import { getCategories, getPaymentMethods } from "../../../services/categories";
+import { createTransaction } from "../../../services/transactions";
 
 function todayFormatted() {
   return new Date().toISOString().split("T")[0];
@@ -22,8 +21,8 @@ function getInitialState(lockedType) {
     amount: "",
     date: todayFormatted(),
     description: "",
-    category: "",
-    paymentMethod: "",
+    category: null,        // full category object from Supabase
+    paymentMethod: null,   // full payment_method object from Supabase
     notes: "",
   };
 }
@@ -32,22 +31,58 @@ export default function AddTransactionModal({
   isOpen,
   onClose,
   onSave,
-  lockedType, // "Expense" | "Income" | undefined — when set, hides the toggle and fixes the type
+  lockedType,
 }) {
+  const supabase = useSupabaseClient();
+  const { user } = useUser();
   const [form, setForm] = useState(() => getInitialState(lockedType));
 
+  const [allCategories, setAllCategories] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch categories + payment methods once when the modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let cancelled = false;
+    setIsLoadingOptions(true);
+
+    Promise.all([getCategories(supabase), getPaymentMethods(supabase)])
+      .then(([categories, methods]) => {
+        if (cancelled) return;
+        setAllCategories(categories);
+        setPaymentMethods(methods);
+      })
+      .catch((err) => {
+        console.error("Failed to load categories/payment methods:", err);
+        toast.error("Failed to load form options. Please try again.");
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingOptions(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, supabase]);
+
+  // Reset the form whenever the modal opens
   useEffect(() => {
     if (isOpen) setForm(getInitialState(lockedType));
   }, [isOpen, lockedType]);
 
-  const categoryOptions =
-    form.type === "Income" ? incomeCategoryOptions : expenseCategoryOptions;
+  // Categories filtered by the currently selected type (income/expense)
+  const categoryOptions = allCategories.filter(
+    (c) => c.type === (form.type === "Income" ? "income" : "expense")
+  );
 
   const updateField = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleTypeChange = (type) =>
-    setForm((prev) => ({ ...prev, type, category: "" }));
+    setForm((prev) => ({ ...prev, type, category: null }));
 
   const handleCategoryChange = (category) =>
     setForm((prev) => ({ ...prev, category }));
@@ -60,9 +95,35 @@ export default function AddTransactionModal({
     onClose();
   };
 
-  const handleSave = () => {
-    onSave?.(form);
-    handleClose();
+  const handleSave = async () => {
+    if (!user) {
+      toast.error("You must be signed in to add a transaction.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const saved = await createTransaction(supabase, user.id, {
+        type: form.type,
+        amount: parseFloat(form.amount),
+        title: form.description,
+        subtitle: null,
+        categoryId: form.category.id,
+        paymentMethodId: form.paymentMethod.id,
+        transactionDate: form.date,
+        transactionTime: null,
+        notes: form.notes || null,
+      });
+
+      onSave?.(saved);
+      toast.success("Transaction saved.");
+      handleClose();
+    } catch (err) {
+      console.error("Failed to save transaction:", err);
+      toast.error("Failed to save transaction. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const isValid =
@@ -108,28 +169,20 @@ export default function AddTransactionModal({
       />
 
       <div className="mb-4">
-        <IconDropdown
-          label="Category"
-          required
-          placeholder="Select category"
-          placeholderIcon={Tag}
-          value={form.category}
+        <CategoryDropdown
+          value={form.category?.name ?? ""}
           onChange={handleCategoryChange}
-          options={categoryOptions}
-          meta={categoryMeta}
+          categories={categoryOptions}
+          isLoading={isLoadingOptions}
         />
       </div>
 
       <div className="mb-4">
-        <IconDropdown
-          label="Payment Method"
-          required
-          placeholder="Select payment method"
-          placeholderIcon={CreditCard}
-          value={form.paymentMethod}
+        <PaymentMethodDropdown
+          value={form.paymentMethod?.name ?? ""}
           onChange={handlePaymentMethodChange}
-          options={paymentMethodOptions}
-          meta={paymentMethodMeta}
+          paymentMethods={paymentMethods}
+          isLoading={isLoadingOptions}
         />
       </div>
 
@@ -149,16 +202,17 @@ export default function AddTransactionModal({
       <div className="flex items-center justify-end gap-3">
         <button
           onClick={handleClose}
-          className="flex h-[42px] items-center rounded-lg cursor-pointer border border-slate-200 bg-white px-5 text-[13.5px] font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+          disabled={isSaving}
+          className="flex h-[42px] items-center rounded-lg cursor-pointer border border-slate-200 bg-white px-5 text-[13.5px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           onClick={handleSave}
-          disabled={!isValid}
+          disabled={!isValid || isSaving}
           className="flex h-[42px] items-center rounded-lg cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 px-5 text-[13.5px] font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Save Transaction
+          {isSaving ? "Saving..." : "Save Transaction"}
         </button>
       </div>
     </Modal>

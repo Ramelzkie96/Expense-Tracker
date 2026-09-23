@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { toast } from "sonner";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import TransactionsHeader from "../components/transactions/TransactionsHeader";
 import TransactionsToolbar from "../components/transactions/TransactionsToolbar";
@@ -7,14 +9,40 @@ import TransactionsPagination from "../components/transactions/TransactionsPagin
 import TransactionsFilterPanel from "../components/transactions/TransactionsFilterPanel";
 import TransactionsSummaryPanel from "../components/transactions/TransactionsSummaryPanel";
 import AddTransactionModal from "../components/ui/transactions/AddTransactionModal";
-import { transactions } from "../data/transactions";
+import { useSupabaseClient } from "../hooks/useSupabaseClient";
+import { getTransactions } from "../services/transactions";
+import { mapTransactionRow } from "../utils/transactionMapper";
 
 export default function Transactions() {
+  const supabase = useSupabaseClient();
+  const { user } = useUser();
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const totalPages = 6;
-  const totalResults = 48;
+  const [transactions, setTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // TODO: wire up real server-side pagination once the transaction list grows;
+  // for now everything returned by getTransactions is shown on one page.
+  const totalPages = 1;
+  const totalResults = transactions.length;
+
+  const loadTransactions = useCallback(() => {
+    if (!user) return;
+    setIsLoading(true);
+    getTransactions(supabase, user.id)
+      .then((rows) => setTransactions(rows.map(mapTransactionRow)))
+      .catch((err) => {
+        console.error("Failed to load transactions:", err);
+        toast.error("Failed to load transactions.");
+      })
+      .finally(() => setIsLoading(false));
+  }, [supabase, user]);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [loadTransactions]);
 
   const totalIncome = transactions
     .filter((t) => t.type === "Income")
@@ -25,9 +53,9 @@ export default function Transactions() {
   const netTotal = totalIncome - totalExpenses;
   const savedPct = totalIncome ? Math.round((netTotal / totalIncome) * 100) : 0;
 
-  const handleSaveTransaction = (formData) => {
-    // TODO: push formData into real transaction storage/state once wired to a backend
-    console.log("New transaction:", formData);
+  const handleSaveTransaction = () => {
+    // Re-fetch so ordering and joined category/payment-method data stay correct.
+    loadTransactions();
   };
 
   return (
@@ -38,7 +66,17 @@ export default function Transactions() {
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <TransactionsHeader onAddTransaction={() => setIsModalOpen(true)} />
             <TransactionsToolbar search={search} onSearchChange={setSearch} />
-            <TransactionsTable transactions={transactions} />
+            {isLoading ? (
+              <p className="py-10 text-center text-[13px] text-slate-400">
+                Loading transactions...
+              </p>
+            ) : transactions.length === 0 ? (
+              <p className="py-10 text-center text-[13px] text-slate-400">
+                No transactions yet. Click "Add Transaction" to create one.
+              </p>
+            ) : (
+              <TransactionsTable transactions={transactions} />
+            )}
             <TransactionsPagination
               page={page}
               totalPages={totalPages}
