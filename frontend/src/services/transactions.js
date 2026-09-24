@@ -15,7 +15,7 @@ export async function getTransactions(supabase, userId) {
     `)
     .eq("user_id", userId)
     .order("transaction_date", { ascending: false })
-    .order("transaction_time", { ascending: false });
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
   return data;

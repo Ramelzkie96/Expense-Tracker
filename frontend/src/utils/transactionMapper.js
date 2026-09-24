@@ -36,16 +36,19 @@ function resolveCategoryIcon(iconName) {
 }
 
 function resolveMethodIcon(paymentMethod) {
-  if (!paymentMethod) return { type: "emoji", value: "💳" };
+  if (!paymentMethod) return { type: "icon", Icon: LucideIcons.CreditCard };
 
   if (paymentMethod.is_image) {
     const src = PAYMENT_METHOD_IMAGES[paymentMethod.icon_key];
     if (src) return { type: "image", src };
     // Fallback if the image asset isn't registered locally yet
-    return { type: "emoji", value: "💳" };
+    return { type: "icon", Icon: LucideIcons.CreditCard };
   }
 
-  return { type: "emoji", value: paymentMethod.icon_key || "💳" };
+  // icon_key holds a Lucide component name (e.g. "Landmark", "Banknote"),
+  // same convention as categories.icon_name.
+  const Icon = LucideIcons[paymentMethod.icon_key] || LucideIcons.CreditCard;
+  return { type: "icon", Icon };
 }
 
 // Converts a raw Supabase transaction row (joined with categories and
