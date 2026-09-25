@@ -40,7 +40,7 @@ function Dropdown({
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen((o) => !o)}
-        className="flex h-[38px] cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
+        className="flex h-[38px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
       >
         <Icon size={15} strokeWidth={2} className="text-slate-400" />
         {displayLabel}
@@ -55,9 +55,9 @@ function Dropdown({
               onChange(null);
               setIsOpen(false);
             }}
-            className="flex cursor-pointer w-full items-center justify-between px-3 py-2 text-left text-[13px] text-slate-600 hover:bg-slate-50"
+            className="flex w-full items-center justify-between px-3 py-2 text-left text-[13px] text-slate-600 hover:bg-slate-50"
           >
-            {label}
+            All {label}
             {!value && <Check size={14} className="text-indigo-600" />}
           </button>
 
@@ -76,7 +76,7 @@ function Dropdown({
                     onChange(opt);
                     setIsOpen(false);
                   }}
-                  className="flex cursor-pointer w-full items-center justify-between px-3 py-2 text-left text-[13px] text-slate-600 hover:bg-slate-50"
+                  className="flex w-full items-center justify-between px-3 py-2 text-left text-[13px] text-slate-600 hover:bg-slate-50"
                 >
                   {optLabel}
                   {isSelected && <Check size={14} className="text-indigo-600" />}
@@ -99,6 +99,7 @@ export default function TransactionsToolbar({
   onCategoryChange,
   paymentMethod,
   onPaymentMethodChange,
+  showTypeFilter = true,
 }) {
   const supabase = useSupabaseClient();
   const { user } = useUser();
@@ -131,13 +132,15 @@ export default function TransactionsToolbar({
         />
       </div>
 
-      <Dropdown
-        icon={SlidersHorizontal}
-        label="All Types"
-        options={TYPE_OPTIONS}
-        value={type}
-        onChange={onTypeChange}
-      />
+      {showTypeFilter && (
+        <Dropdown
+          icon={SlidersHorizontal}
+          label="Types"
+          options={TYPE_OPTIONS}
+          value={type}
+          onChange={onTypeChange}
+        />
+      )}
 
       <Dropdown
         icon={Tag}
@@ -157,6 +160,10 @@ export default function TransactionsToolbar({
         getOptionLabel={(m) => m.name}
       />
 
+      <button className="flex h-[38px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50">
+        <Filter size={15} strokeWidth={2} className="text-slate-400" />
+        More Filters
+      </button>
     </div>
   );
 }

@@ -62,6 +62,7 @@ export function mapTransactionRow(row) {
   return {
     id: row.id,
     date: formatDate(row.transaction_date),
+    rawDate: row.transaction_date, // ISO "YYYY-MM-DD", for filtering
     time: formatTime(row.transaction_time),
     title: row.title,
     subtitle: row.subtitle ?? "",

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import TransactionsHeader from "../components/transactions/TransactionsHeader";
 import TransactionsToolbar from "../components/transactions/TransactionsToolbar";
@@ -23,6 +24,7 @@ export default function Transactions() {
   const [type, setType] = useState(null);
   const [category, setCategory] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState(null);
+  const [dateRange, setDateRange] = useState(undefined); // { from: Date, to: Date } | undefined
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactions, setTransactions] = useState([]);
@@ -32,6 +34,12 @@ export default function Transactions() {
     if (type && t.type !== type) return false;
     if (category && t.category !== category.name) return false;
     if (paymentMethod && t.method !== paymentMethod.name) return false;
+
+    if (dateRange?.from) {
+      const fromStr = format(dateRange.from, "yyyy-MM-dd");
+      const toStr = format(dateRange.to ?? dateRange.from, "yyyy-MM-dd");
+      if (t.rawDate < fromStr || t.rawDate > toStr) return false;
+    }
 
     if (search) {
       const q = search.toLowerCase();
@@ -79,7 +87,7 @@ export default function Transactions() {
   // Any filter change should reset back to page 1
   useEffect(() => {
     setPage(1);
-  }, [search, type, category, paymentMethod]);
+  }, [search, type, category, paymentMethod, dateRange]);
 
   const totalIncome = filteredTransactions
     .filter((t) => t.type === "Income")
@@ -141,7 +149,11 @@ export default function Transactions() {
 
         {/* Right sidebar */}
         <div className="w-[280px] shrink-0 space-y-5">
-          <TransactionsFilterPanel />
+          <TransactionsFilterPanel
+            dateRange={dateRange}
+            onApply={setDateRange}
+            onClear={() => setDateRange(undefined)}
+          />
           <TransactionsSummaryPanel
             totalIncome={totalIncome}
             totalExpenses={totalExpenses}
