@@ -7,8 +7,10 @@ export default function BudgetOverviewCards({
   totalIncome,
   totalExpenses,
   remaining,
+  spentPct,
 }) {
-  const spentPct = Math.round((totalSpent / monthlyBudget) * 100);
+  const barWidthPct = Math.min(100, Math.max(0, spentPct));
+  const isOverBudget = spentPct > 100;
   const remainingPct = 100 - spentPct;
 
   return (
@@ -29,15 +31,28 @@ export default function BudgetOverviewCards({
 
         <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600"
-            style={{ width: `${spentPct}%` }}
+            className={`h-full rounded-full ${
+              isOverBudget
+                ? "bg-rose-500"
+                : "bg-gradient-to-r from-indigo-500 to-indigo-600"
+            }`}
+            style={{ width: `${barWidthPct}%` }}
           />
         </div>
 
         <div className="flex items-center justify-between text-[12.5px]">
           <span className="text-slate-500">{formatPesoPlain(totalSpent)} spent</span>
-          <span className="font-semibold text-slate-500">{spentPct}%</span>
-          <span className="text-slate-500">{formatPesoPlain(remaining)} remaining</span>
+          <span
+            className={`font-semibold ${
+              isOverBudget ? "text-rose-500" : "text-slate-500"
+            }`}
+          >
+            {spentPct}%
+          </span>
+          <span className="text-slate-500">
+            {remaining < 0 ? "-" : ""}
+            {formatPesoPlain(remaining)} remaining
+          </span>
         </div>
       </div>
 
@@ -67,10 +82,10 @@ export default function BudgetOverviewCards({
         iconBg="bg-indigo-100"
         iconColor="text-indigo-600"
         label="Remaining"
-        value={formatPesoPlain(remaining)}
+        value={`${remaining < 0 ? "-" : ""}${formatPesoPlain(remaining)}`}
         cardBg="bg-indigo-50/50"
         footer={`${remainingPct}%`}
-        footerColor="text-indigo-600"
+        footerColor={isOverBudget ? "text-rose-500" : "text-indigo-600"}
       />
     </div>
   );

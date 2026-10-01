@@ -32,7 +32,7 @@ export default function CalendarToolbar({
         <h2 className="text-[18px] font-bold text-slate-800">{monthLabel}</h2>
       </div>
 
-      <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1">
+      {/* <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1">
         {VIEWS.map((v) => (
           <button
             key={v}
@@ -46,7 +46,7 @@ export default function CalendarToolbar({
             {v}
           </button>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { format, addMonths, subMonths } from "date-fns";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import CalendarStatCards from "../components/calendar/CalendarStatCards";
 import CalendarToolbar from "../components/calendar/CalendarToolbar";
@@ -7,20 +9,49 @@ import CalendarLegend from "../components/calendar/CalendarLegend";
 import MonthSummaryCard from "../components/calendar/MonthSummaryCard";
 import UpcomingPaymentsCard from "../components/calendar/UpcomingPaymentsCard";
 import QuickActionsGrid from "../components/calendar/QuickActionsGrid";
-import { calendarWeeks } from "../data/calendar";
+import { useSupabaseClient } from "../hooks/useSupabaseClient";
+import { getTransactions } from "../services/transactions";
+import { mapTransactionRow } from "../utils/transactionMapper";
+import { buildCalendarWeeks, computeCalendarStats } from "../utils/calendarGrid";
 
 export default function Calendar() {
-  const [monthLabel] = useState("September 2026");
-  const [view, setView] = useState("Month");
+  const supabase = useSupabaseClient();
+  const { user } = useUser();
 
-  // Mock data is hardcoded to September 2026, so prev/next month
-  // navigation is a no-op for now until real date logic is wired up.
-  const handlePrevMonth = () => {};
-  const handleNextMonth = () => {};
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [view, setView] = useState("Month");
+  const [transactions, setTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    setIsLoading(true);
+    getTransactions(supabase, user.id)
+      .then((rows) => setTransactions(rows.map(mapTransactionRow)))
+      .catch((err) => console.error("Failed to load calendar transactions:", err))
+      .finally(() => setIsLoading(false));
+  }, [supabase, user]);
+
+  // All transactions are already loaded, so switching months just
+  // re-filters client-side — no refetch needed.
+  const calendarWeeks = useMemo(
+    () => buildCalendarWeeks(transactions, currentMonth),
+    [transactions, currentMonth]
+  );
+
+  const calendarStats = useMemo(
+    () => computeCalendarStats(transactions, currentMonth),
+    [transactions, currentMonth]
+  );
+
+  const monthLabel = format(currentMonth, "MMMM yyyy");
+
+  const handlePrevMonth = () => setCurrentMonth((m) => subMonths(m, 1));
+  const handleNextMonth = () => setCurrentMonth((m) => addMonths(m, 1));
 
   return (
     <DashboardLayout>
-      <CalendarStatCards />
+      <CalendarStatCards stats={calendarStats} />
 
       <div className="flex items-start gap-6">
         {/* Main column */}
@@ -33,16 +64,21 @@ export default function Calendar() {
               view={view}
               onViewChange={setView}
             />
-            <CalendarGrid weeks={calendarWeeks} />
+            {isLoading ? (
+              <p className="py-10 text-center text-[13px] text-slate-400">
+                Loading calendar...
+              </p>
+            ) : (
+              <CalendarGrid weeks={calendarWeeks} />
+            )}
             <CalendarLegend />
           </div>
         </div>
 
         {/* Right sidebar */}
         <div className="w-[300px] shrink-0 space-y-5">
-          <MonthSummaryCard />
-          <UpcomingPaymentsCard />
-          <QuickActionsGrid />
+          <MonthSummaryCard stats={calendarStats} />
+
         </div>
       </div>
     </DashboardLayout>

@@ -135,7 +135,7 @@ export default function TransactionExpenses() {
                 No expenses match your filters.
               </p>
             ) : (
-              <TransactionsTable transactions={paginatedExpenses} />
+              <TransactionsTable transactions={paginatedExpenses} onDeleted={loadTransactions} onUpdated={loadTransactions}/>
             )}
             <TransactionsPagination
               page={page}

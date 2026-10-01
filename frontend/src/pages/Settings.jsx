@@ -15,8 +15,6 @@ export default function Settings() {
   return (
     <DashboardLayout>
       <div className="flex items-start gap-6">
-        {/* Tabs */}
-        <SettingsTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Main column */}
         <div className="min-w-0 flex-1 space-y-6">
@@ -24,7 +22,6 @@ export default function Settings() {
             <>
               <ProfileInformationCard />
               <QuickActionsCard />
-              <AccountInformationCard />
             </>
           ) : (
             <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
@@ -33,14 +30,6 @@ export default function Settings() {
               </p>
             </div>
           )}
-        </div>
-
-        {/* Right sidebar */}
-        <div className="w-[300px] shrink-0 space-y-5">
-          <FinanceTipBanner />
-          <StorageBackupCard />
-          <SecurityCard />
-          <NeedHelpCard />
         </div>
       </div>
     </DashboardLayout>

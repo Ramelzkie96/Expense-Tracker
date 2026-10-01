@@ -1,7 +1,20 @@
-import {LayoutDashboard,ArrowLeftRight,WalletCards,RefreshCw,BarChart3,CalendarDays,FileText,Settings,ChevronDown,Wallet,} from "lucide-react";
-import profile from "../../assets/profile.jpg"
-
-import { NavLink, useLocation } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import {
+  LayoutDashboard,
+  ArrowLeftRight,
+  WalletCards,
+  RefreshCw,
+  BarChart3,
+  CalendarDays,
+  FileText,
+  Settings,
+  ChevronDown,
+  Wallet,
+  LogOut,
+  User as UserIcon,
+} from "lucide-react";
+import { useUser, useClerk } from "@clerk/clerk-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 const menuItems = [
   {
@@ -19,16 +32,7 @@ const menuItems = [
     icon: WalletCards,
     path: "/budgets",
   },
-  {
-    label: "Recurring",
-    icon: RefreshCw,
-    path: "/recurring",
-  },
-  {
-    label: "Analytics",
-    icon: BarChart3,
-    path: "/analytics",
-  },
+
   {
     label: "Calendar",
     icon: CalendarDays,
@@ -58,6 +62,41 @@ const transactionSubItems = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    setIsMenuOpen(false);
+
+    // Write this FIRST, synchronously, before calling signOut() at all.
+    // signOut() triggers a full document reload to /login, which destroys
+    // all JS state — but sessionStorage survives a page reload, so as long
+    // as this line runs before the reload starts, the value will still be
+    // there once the new page loads.
+    sessionStorage.setItem("toast:success", "Logged out successfully.");
+
+    try {
+      await signOut();
+    } catch (err) {
+      sessionStorage.setItem("toast:error", "Failed to log out. Please try again.");
+      sessionStorage.removeItem("toast:success");
+      navigate("/login");
+    }
+  };
 
   const isTransactionsActive =
     location.pathname === "/transactions" ||
@@ -208,17 +247,66 @@ export default function Sidebar() {
 
       {/* Bottom Section */}
       <div className="shrink-0 px-4 pb-4">
-        <div className="border-t border-slate-100 pt-4">
-          <button className="flex w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors hover:bg-slate-50">
+        <div className="relative border-t border-slate-100 pt-4" ref={menuRef}>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((o) => !o)}
+            aria-haspopup="menu"
+            aria-expanded={isMenuOpen}
+            className="flex w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors hover:bg-slate-50"
+          >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-200">
-              <img src={profile} alt="Profile" className="h-full w-full object-cover" />
+              {isLoaded && user?.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={user.fullName ?? "Profile"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="h-full w-full animate-pulse bg-slate-200" />
+              )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-bold text-slate-800">Ramel Gulane</p>
-              <p className="truncate text-[10px] text-slate-500">ramel.dev@gmail.com</p>
+              <p className="truncate text-[12px] font-bold text-slate-800">
+                {isLoaded ? user?.fullName || user?.username || "My Account" : "Loading..."}
+              </p>
+              <p className="truncate text-[10px] text-slate-500">
+                {isLoaded ? user?.primaryEmailAddress?.emailAddress ?? "" : ""}
+              </p>
             </div>
-            <ChevronDown size={16} className="shrink-0 text-slate-500" />
+            <ChevronDown
+              size={16}
+              className={`shrink-0 text-slate-500 transition-transform ${
+                isMenuOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
+
+          {isMenuOpen && (
+            <div
+              role="menu"
+              className="absolute bottom-full left-0 mb-1.5 w-full overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+            >
+              <NavLink
+                to="/settings"
+                role="menuitem"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                <UserIcon size={14} className="text-slate-400" />
+                Account Settings
+              </NavLink>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] font-medium text-rose-500 transition-colors hover:bg-rose-50"
+              >
+                <LogOut size={14} />
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </aside>

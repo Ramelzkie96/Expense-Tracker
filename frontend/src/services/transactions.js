@@ -69,6 +69,28 @@ export async function updateTransaction(supabase, id, payload) {
 }
 
 export async function deleteTransaction(supabase, id) {
-  const { error } = await supabase.from("transactions").delete().eq("id", id);
+  const { data, error } = await supabase
+    .from("transactions")
+    .delete()
+    .eq("id", id)
+    .select("id");
+
   if (error) throw error;
+  if (!data || data.length === 0) {
+    throw new Error("Transaction was not deleted (not found or not permitted).");
+  }
 }
+
+
+// Lean fetch for dashboard summary math — no category/payment-method joins needed.
+export async function getDashboardTransactions(supabase, userId) {
+  const { data, error } = await supabase
+    .from("transactions")
+    .select("type, amount, transaction_date")
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  return data;
+}
+
+

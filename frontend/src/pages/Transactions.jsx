@@ -134,7 +134,7 @@ export default function Transactions() {
                 No transactions match your filters.
               </p>
             ) : (
-              <TransactionsTable transactions={paginatedTransactions} />
+              <TransactionsTable transactions={paginatedTransactions} onDeleted={loadTransactions} onUpdated={loadTransactions}/>
             )}
             <TransactionsPagination
               page={page}

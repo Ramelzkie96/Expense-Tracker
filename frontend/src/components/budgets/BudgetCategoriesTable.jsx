@@ -29,6 +29,11 @@ export default function BudgetCategoriesTable({ categories, onAddBudget }) {
       </div>
 
       <div className="overflow-x-auto">
+        {categories.length === 0 ? (
+          <p className="py-10 text-center text-[13px] text-slate-400">
+            No budgets set for this month yet. Click "Add Budget" to create one.
+          </p>
+        ) : (
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-slate-100 text-left text-[12px] font-semibold text-slate-400">
@@ -74,10 +79,19 @@ export default function BudgetCategoriesTable({ categories, onAddBudget }) {
                       <div className="h-1.5 w-[110px] overflow-hidden rounded-full bg-slate-100">
                         <div
                           className="h-full rounded-full"
-                          style={{ width: `${c.progress}%`, backgroundColor: c.color }}
+                          style={{
+                            width: `${Math.min(100, c.progress)}%`,
+                            backgroundColor: c.progress > 100 ? "#f43f5e" : c.color,
+                          }}
                         />
                       </div>
-                      <span className="text-[12.5px] text-slate-500">{c.progress}%</span>
+                      <span
+                        className={`text-[12.5px] ${
+                          c.progress > 100 ? "font-semibold text-rose-500" : "text-slate-500"
+                        }`}
+                      >
+                        {c.progress}%
+                      </span>
                     </div>
                   </td>
 
@@ -97,6 +111,7 @@ export default function BudgetCategoriesTable({ categories, onAddBudget }) {
             })}
           </tbody>
         </table>
+        )}
       </div>
     </div>
   );

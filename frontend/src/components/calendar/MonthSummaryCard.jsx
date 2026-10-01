@@ -1,7 +1,13 @@
 import { ArrowUp, ArrowDown, Wallet, Percent, ArrowRight } from "lucide-react";
-import { monthSummary, formatPesoPlain } from "../../data/calendar";
+import { formatPesoPlain } from "../../data/calendar";
 
-const rows = [
+// formatPesoPlain doesn't handle negatives specially (it would print
+// "₱-650.00"); this puts the sign before the currency symbol instead.
+function formatSignedPeso(amount) {
+  return amount < 0 ? `-${formatPesoPlain(Math.abs(amount))}` : formatPesoPlain(amount);
+}
+
+const ROWS = [
   {
     key: "income",
     label: "Income",
@@ -33,7 +39,15 @@ const rows = [
   },
 ];
 
-export default function MonthSummaryCard() {
+export default function MonthSummaryCard({ stats }) {
+  // Maps row keys to the real stats object's field names
+  const values = {
+    income: formatPesoPlain(stats.income),
+    expenses: formatPesoPlain(stats.expenses),
+    savings: formatSignedPeso(stats.netSavings),
+    savingsRate: `${stats.savingsRate.toFixed(1)}%`,
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
@@ -45,17 +59,18 @@ export default function MonthSummaryCard() {
       </div>
 
       <div className="space-y-3.5">
-        {rows.map((row) => {
+        {ROWS.map((row) => {
           const Icon = row.icon;
-          const value = monthSummary[row.key];
           return (
             <div key={row.key} className="flex items-center gap-3">
-              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${row.iconBg}`}>
+              <div
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${row.iconBg}`}
+              >
                 <Icon size={16} strokeWidth={2} className={row.iconColor} />
               </div>
               <span className="flex-1 text-[13px] text-slate-600">{row.label}</span>
               <span className="text-[13.5px] font-bold text-slate-800">
-                {row.isPercent ? value : formatPesoPlain(value)}
+                {values[row.key]}
               </span>
             </div>
           );

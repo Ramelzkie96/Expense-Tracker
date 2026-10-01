@@ -11,7 +11,12 @@ export default function RecentBudgetActivityCard({ activity }) {
       </div>
 
       <div className="space-y-4">
-        {activity.map((a) => {
+        {activity.length === 0 ? (
+          <p className="py-6 text-center text-[13px] text-slate-400">
+            No transactions yet.
+          </p>
+        ) : (
+        activity.map((a) => {
           const Icon = a.icon;
           return (
             <div key={a.id} className="flex items-center gap-3">
@@ -35,7 +40,8 @@ export default function RecentBudgetActivityCard({ activity }) {
               </span>
             </div>
           );
-        })}
+        })
+        )}
       </div>
     </div>
   );

@@ -135,7 +135,7 @@ export default function TransactionIncome() {
                 No income matches your filters.
               </p>
             ) : (
-              <TransactionsTable transactions={paginatedIncome} />
+              <TransactionsTable transactions={paginatedIncome} onDeleted={loadTransactions} onUpdated={loadTransactions}/>
             )}
             <TransactionsPagination
               page={page}
