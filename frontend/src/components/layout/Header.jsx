@@ -34,13 +34,6 @@ export default function Header() {
 
       {/* Header Actions */}
       <div className="flex items-center gap-3">
-        {/* Dark Mode */}
-        <button
-          aria-label="Toggle dark mode"
-          className="flex h-[44px] w-[44px] items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50"
-        >
-          <Moon size={19} strokeWidth={1.8} />
-        </button>
       </div>
     </header>
   );
