@@ -29,7 +29,7 @@ export default function CalendarToolbar({
           </button>
         </div>
 
-        <h2 className="text-[18px] font-bold text-slate-800">{monthLabel}</h2>
+        <h2 className="text-[16px] font-bold text-slate-800 sm:text-[18px]">{monthLabel}</h2>
       </div>
 
       {/* <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1">

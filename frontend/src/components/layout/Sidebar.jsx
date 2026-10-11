@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -12,6 +12,8 @@ import {
   Wallet,
   LogOut,
   User as UserIcon,
+  X,
+  Menu,
 } from "lucide-react";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -66,6 +68,10 @@ export default function Sidebar() {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
 
+  // Drawer state lives here, so no props / layout wiring is needed
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = useCallback(() => setIsOpen(false), []);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -78,6 +84,25 @@ export default function Sidebar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Close the drawer whenever the route changes (mobile)
+  useEffect(() => {
+    onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  // Lock page scroll while the drawer is open + close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen, onClose]);
 
   const handleSignOut = async () => {
     setIsMenuOpen(false);
@@ -103,10 +128,38 @@ export default function Sidebar() {
     location.pathname.startsWith("/transactions/");
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-[242px] flex-col border-r border-slate-200 bg-white">
+    <>
+      {/* Mobile top bar with hamburger (hidden on desktop) */}
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-slate-200 bg-white px-4 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-label="Open menu"
+          className="rounded-lg p-1.5 text-slate-700 hover:bg-slate-100"
+        >
+          <Menu size={22} />
+        </button>
+        <span className="text-[16px] font-bold text-slate-800">Expense Tracker</span>
+      </header>
+
+      {/* Backdrop (mobile/tablet only) */}
+      <div
+        onClick={onClose}
+        aria-hidden="true"
+        className={`fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[1px] transition-opacity duration-300 lg:hidden ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+    <aside
+      className={`fixed left-0 top-0 z-50 flex h-dvh w-[260px] max-w-[85vw] flex-col border-r border-slate-200 bg-white
+        transition-transform duration-300 ease-out
+        lg:z-40 lg:w-[242px] lg:translate-x-0
+        ${isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}
+    >
 
       {/* Logo */}
-      <div className="flex h-[82px] shrink-0 items-center border-b border-slate-100 px-7">
+      <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-slate-100 px-5 lg:h-[82px] lg:px-7">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 shadow-sm">
             <Wallet size={19} strokeWidth={2.2} className="text-white" />
@@ -115,6 +168,14 @@ export default function Sidebar() {
             Expense Tracker
           </span>
         </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close menu"
+          className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden"
+        >
+          <X size={20} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -310,5 +371,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

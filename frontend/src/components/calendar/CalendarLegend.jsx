@@ -4,7 +4,7 @@ import { legendItems, EVENT_KIND_STYLES } from "../../data/calendar";
 export default function CalendarLegend() {
   return (
     <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-wrap items-center gap-5">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-5">
         {legendItems.map((item) => (
           <span key={item.kind} className="flex items-center gap-1.5 text-[12.5px] text-slate-600">
             <span className={`h-2.5 w-2.5 rounded-full ${EVENT_KIND_STYLES[item.kind].dot}`} />

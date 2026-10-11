@@ -7,8 +7,6 @@ import CalendarToolbar from "../components/calendar/CalendarToolbar";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import CalendarLegend from "../components/calendar/CalendarLegend";
 import MonthSummaryCard from "../components/calendar/MonthSummaryCard";
-import UpcomingPaymentsCard from "../components/calendar/UpcomingPaymentsCard";
-import QuickActionsGrid from "../components/calendar/QuickActionsGrid";
 import { useSupabaseClient } from "../hooks/useSupabaseClient";
 import { getTransactions } from "../services/transactions";
 import { mapTransactionRow } from "../utils/transactionMapper";
@@ -53,10 +51,10 @@ export default function Calendar() {
     <DashboardLayout>
       <CalendarStatCards stats={calendarStats} />
 
-      <div className="flex items-start gap-6">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:gap-6">
         {/* Main column */}
         <div className="min-w-0 flex-1">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <CalendarToolbar
               monthLabel={monthLabel}
               onPrevMonth={handlePrevMonth}
@@ -69,14 +67,14 @@ export default function Calendar() {
                 Loading calendar...
               </p>
             ) : (
-              <CalendarGrid weeks={calendarWeeks} />
+              <CalendarGrid weeks={calendarWeeks} monthLabel={monthLabel} />
             )}
             <CalendarLegend />
           </div>
         </div>
 
         {/* Right sidebar */}
-        <div className="w-[300px] shrink-0 space-y-5">
+        <div className="w-full shrink-0 space-y-5 xl:w-[300px]">
           <MonthSummaryCard stats={calendarStats} />
 
         </div>

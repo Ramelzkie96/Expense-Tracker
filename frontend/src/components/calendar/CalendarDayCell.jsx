@@ -2,18 +2,22 @@ import { EVENT_KIND_STYLES, formatPesoSigned } from "../../data/calendar";
 
 const MAX_VISIBLE_EVENTS = 3;
 
-export default function CalendarDayCell({ day }) {
+export default function CalendarDayCell({ day, isSelected = false, onSelect }) {
   const visibleEvents = day.events.slice(0, MAX_VISIBLE_EVENTS);
   const overflowCount = day.events.length - visibleEvents.length;
 
   return (
     <div
-      className={`min-h-[110px] border-b border-r border-slate-100 p-2.5 ${
+      role="button"
+      tabIndex={0}
+      onClick={onSelect}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect?.()}
+      className={`flex min-h-[56px] cursor-pointer flex-col items-center border-b border-r border-slate-100 p-1 md:block md:min-h-[110px] md:cursor-default md:items-stretch md:p-2.5 ${
         day.inCurrentMonth ? "bg-white" : "bg-slate-50/50"
-      }`}
+      } ${isSelected ? "ring-2 ring-inset ring-indigo-400 md:ring-0" : ""}`}
     >
       <span
-        className={`mb-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full text-[13px] font-semibold ${
+        className={`mb-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-[12px] font-semibold md:mb-1.5 md:text-[13px] ${
           day.isToday
             ? "bg-indigo-600 text-white"
             : day.inCurrentMonth
@@ -24,7 +28,18 @@ export default function CalendarDayCell({ day }) {
         {day.date}
       </span>
 
-      <div className="space-y-1.5">
+      {/* Mobile: just colored dots, details show below the grid on tap */}
+      <div className="flex items-center justify-center gap-0.5 md:hidden">
+        {visibleEvents.map((event, i) => (
+          <span
+            key={i}
+            className={`h-1.5 w-1.5 rounded-full ${EVENT_KIND_STYLES[event.kind].dot}`}
+          />
+        ))}
+      </div>
+
+      {/* Tablet / desktop: full event list */}
+      <div className="hidden space-y-1.5 md:block">
         {visibleEvents.map((event, i) => {
           const style = EVENT_KIND_STYLES[event.kind];
           return (

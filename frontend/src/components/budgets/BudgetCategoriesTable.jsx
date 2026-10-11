@@ -16,8 +16,8 @@ function statusStyles(status) {
 
 export default function BudgetCategoriesTable({ categories, onAddBudget }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-5 flex items-center justify-between">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-[16px] font-bold text-slate-800">Budget Categories</h3>
         <button
           onClick={onAddBudget}
@@ -28,13 +28,15 @@ export default function BudgetCategoriesTable({ categories, onAddBudget }) {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        {categories.length === 0 ? (
+      {categories.length === 0 ? (
           <p className="py-10 text-center text-[13px] text-slate-400">
             No budgets set for this month yet. Click "Add Budget" to create one.
           </p>
-        ) : (
-        <table className="w-full border-collapse">
+      ) : (
+        <>
+          {/* Desktop: table */}
+          <div className="hidden overflow-x-auto xl:block">
+        <table className="w-full min-w-[720px] border-collapse">
           <thead>
             <tr className="border-b border-slate-100 text-left text-[12px] font-semibold text-slate-400">
               <th className="pb-3 pr-4 font-semibold">Category</th>
@@ -76,7 +78,7 @@ export default function BudgetCategoriesTable({ categories, onAddBudget }) {
 
                   <td className="py-4 pr-4 align-middle">
                     <div className="flex items-center gap-2.5">
-                      <div className="h-1.5 w-[110px] overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-1.5 w-[90px] overflow-hidden rounded-full bg-slate-100">
                         <div
                           className="h-full rounded-full"
                           style={{
@@ -111,8 +113,74 @@ export default function BudgetCategoriesTable({ categories, onAddBudget }) {
             })}
           </tbody>
         </table>
-        )}
-      </div>
+          </div>
+
+          {/* Mobile / tablet: cards */}
+          <div className="space-y-3 xl:hidden">
+            {categories.map((c) => {
+              const Icon = c.icon;
+              return (
+                <div key={c.id} className="rounded-xl border border-slate-100 p-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${c.iconBg}`}>
+                      <Icon size={15} strokeWidth={2} className={c.iconColor} />
+                    </div>
+                    <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold text-slate-800">
+                      {c.name}
+                    </span>
+                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-medium ${statusStyles(c.status)}`}>
+                      {c.status}
+                    </span>
+                    <button className="-mr-1.5 shrink-0 rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600">
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2.5">
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${Math.min(100, c.progress)}%`,
+                          backgroundColor: c.progress > 100 ? "#f43f5e" : c.color,
+                        }}
+                      />
+                    </div>
+                    <span
+                      className={`text-[12.5px] ${
+                        c.progress > 100 ? "font-semibold text-rose-500" : "text-slate-500"
+                      }`}
+                    >
+                      {c.progress}%
+                    </span>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    <div className="min-w-0">
+                      <p className="text-[11.5px] text-slate-400">Budget</p>
+                      <p className="truncate text-[12.5px] font-semibold text-slate-700">
+                        {formatPesoPlain(c.monthlyBudget)}
+                      </p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11.5px] text-slate-400">Spent</p>
+                      <p className="truncate text-[12.5px] font-semibold text-slate-700">
+                        {formatPesoPlain(c.spent)}
+                      </p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11.5px] text-slate-400">Remaining</p>
+                      <p className="truncate text-[12.5px] font-semibold text-slate-700">
+                        {formatPesoPlain(c.remaining)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }

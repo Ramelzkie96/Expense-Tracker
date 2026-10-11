@@ -103,10 +103,10 @@ export default function TransactionIncome() {
 
   return (
     <DashboardLayout>
-      <div className="flex items-start gap-6">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:gap-6">
         {/* Main column */}
         <div className="min-w-0 flex-1">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <TransactionsHeader
               title="All Income"
               subtitle="Track your earnings and cash inflows"
@@ -149,7 +149,7 @@ export default function TransactionIncome() {
         </div>
 
         {/* Right sidebar */}
-        <div className="w-[280px] shrink-0 space-y-5">
+        <div className="grid w-full shrink-0 gap-5 sm:grid-cols-2 xl:block xl:w-[280px] xl:space-y-5">
           <TransactionsFilterPanel
             dateRange={dateRange}
             onApply={setDateRange}

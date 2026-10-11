@@ -40,15 +40,17 @@ function Dropdown({
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen((o) => !o)}
-        className="flex h-[38px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
+        className="flex h-[38px] w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 sm:w-auto sm:px-3.5"
       >
-        <Icon size={15} strokeWidth={2} className="text-slate-400" />
-        {displayLabel}
-        <ChevronDown size={14} strokeWidth={2} className="text-slate-400" />
+        <Icon size={15} strokeWidth={2} className="shrink-0 text-slate-400" />
+        <span className="min-w-0 flex-1 truncate text-left sm:flex-none">
+          {displayLabel}
+        </span>
+        <ChevronDown size={14} strokeWidth={2} className="shrink-0 text-slate-400" />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-20 mt-1.5 max-h-64 w-52 overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+        <div className="absolute left-0 right-0 z-20 mt-1.5 max-h-64 min-w-[11rem] overflow-y-auto sm:right-auto sm:w-52 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
           {/* "All" option clears this filter */}
           <button
             onClick={() => {
@@ -117,8 +119,8 @@ export default function TransactionsToolbar({
   }, [supabase, user]);
 
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2.5">
-      <div className="relative min-w-[220px] flex-1">
+    <div className="mb-5 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center">
+      <div className="relative col-span-2 min-w-0 sm:min-w-[220px] sm:flex-1">
         <Search
           size={15}
           strokeWidth={2}
@@ -160,7 +162,7 @@ export default function TransactionsToolbar({
         getOptionLabel={(m) => m.name}
       />
 
-      <button className="flex h-[38px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50">
+      <button className="flex h-[38px] w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 sm:w-auto">
         <Filter size={15} strokeWidth={2} className="text-slate-400" />
         More Filters
       </button>

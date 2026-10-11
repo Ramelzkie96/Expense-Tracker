@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import TransactionRow from "./TransactionRow";
+import TransactionCard from "./TransactionCard";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import AddTransactionModal from "../ui/transactions/AddTransactionModal";
 import { useSupabaseClient } from "../../hooks/useSupabaseClient";
@@ -32,8 +33,9 @@ export default function TransactionsTable({ transactions, onDeleted, onUpdated }
 
   return (
     <>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+      {/* Desktop: table */}
+      <div className="hidden overflow-x-auto lg:block">
+        <table className="w-full min-w-[760px] border-collapse">
           <thead>
             <tr className="border-b border-slate-100 text-left text-[12px] font-semibold text-slate-400">
               <th className="pb-3 pr-4 font-semibold">Date</th>
@@ -56,6 +58,18 @@ export default function TransactionsTable({ transactions, onDeleted, onUpdated }
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile / tablet: cards */}
+      <div className="lg:hidden">
+        {transactions.map((t) => (
+          <TransactionCard
+            key={t.id}
+            transaction={t}
+            onEdit={setEditing}
+            onDelete={setPendingDelete}
+          />
+        ))}
       </div>
 
       <ConfirmDialog

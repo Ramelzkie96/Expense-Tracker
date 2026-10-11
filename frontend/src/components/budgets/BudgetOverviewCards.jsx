@@ -14,9 +14,9 @@ export default function BudgetOverviewCards({
   const remainingPct = 100 - spentPct;
 
   return (
-    <div className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 2xl:grid-cols-[1.6fr_1fr_1fr_1fr]">
       {/* Monthly Budget */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:col-span-3 sm:p-6 2xl:col-span-1">
         <div className="mb-4 flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-50">
             <Target size={20} strokeWidth={2} className="text-indigo-600" />
@@ -40,7 +40,7 @@ export default function BudgetOverviewCards({
           />
         </div>
 
-        <div className="flex items-center justify-between text-[12.5px]">
+        <div className="flex items-center justify-between gap-2 text-[11.5px] sm:text-[12.5px]">
           <span className="text-slate-500">{formatPesoPlain(totalSpent)} spent</span>
           <span
             className={`font-semibold ${
@@ -79,6 +79,7 @@ export default function BudgetOverviewCards({
       {/* Remaining */}
       <StatCard
         icon={Wallet}
+        className="col-span-2 sm:col-span-1"
         iconBg="bg-indigo-100"
         iconColor="text-indigo-600"
         label="Remaining"
@@ -91,14 +92,14 @@ export default function BudgetOverviewCards({
   );
 }
 
-function StatCard({ icon: Icon, iconBg, iconColor, label, value, cardBg, footer, footerColor }) {
+function StatCard({ icon: Icon, iconBg, iconColor, label, value, cardBg, footer, footerColor, className = "" }) {
   return (
-    <div className={`rounded-2xl border border-slate-200 ${cardBg} p-5 shadow-sm`}>
+    <div className={`rounded-2xl border border-slate-200 ${cardBg} p-4 shadow-sm sm:p-5 ${className}`}>
       <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-full ${iconBg}`}>
         <Icon size={17} strokeWidth={2.2} className={iconColor} />
       </div>
       <p className="text-[13px] text-slate-500">{label}</p>
-      <p className="mt-0.5 text-[18px] font-bold text-slate-800">{value}</p>
+      <p className="mt-0.5 break-words text-[16px] font-bold text-slate-800 sm:text-[18px]">{value}</p>
       {footer && (
         <p className={`mt-1 text-[12.5px] font-semibold ${footerColor}`}>{footer}</p>
       )}

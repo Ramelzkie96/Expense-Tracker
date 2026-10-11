@@ -53,7 +53,7 @@ export default function CalendarStatCards({ stats }) {
   ];
 
   return (
-    <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
         const isUp = card.changePct >= 0;
@@ -63,9 +63,9 @@ export default function CalendarStatCards({ stats }) {
         return (
           <div
             key={card.id}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+            className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5"
           >
-            <div className="mb-3 flex items-center gap-3">
+            <div className="mb-3 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
               <div
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${card.iconBg}`}
               >
@@ -74,10 +74,10 @@ export default function CalendarStatCards({ stats }) {
               <p className="text-[13px] text-slate-500">{card.label}</p>
             </div>
 
-            <p className="text-[20px] font-bold text-slate-800">{card.value}</p>
+            <p className="break-words text-[17px] font-bold text-slate-800 sm:text-[20px]">{card.value}</p>
 
             <p
-              className={`mt-1 flex items-center gap-1 text-[12.5px] font-medium ${changeColor}`}
+              className={`mt-1 flex flex-wrap items-center gap-1 text-[11.5px] font-medium sm:text-[12.5px] ${changeColor}`}
             >
               <TrendIcon size={12} strokeWidth={2.5} />
               {formatChangePct(card.changePct)} vs last month

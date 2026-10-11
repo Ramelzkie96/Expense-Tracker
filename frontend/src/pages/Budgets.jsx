@@ -62,7 +62,7 @@ export default function Budgets() {
 
   return (
     <DashboardLayout>
-      <div className="flex items-start gap-6">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:gap-6">
         {/* Main column */}
         <div className="min-w-0 flex-1">
           {isLoading ? (
@@ -92,7 +92,7 @@ export default function Budgets() {
         </div>
 
         {/* Right sidebar */}
-        <div className="w-[300px] shrink-0 space-y-5">
+        <div className="grid w-full shrink-0 gap-5 sm:grid-cols-2 sm:items-start xl:block xl:w-[300px] xl:space-y-5">
           <BudgetProgressCard
             spent={overview.totalSpent}
             remaining={overview.remaining}

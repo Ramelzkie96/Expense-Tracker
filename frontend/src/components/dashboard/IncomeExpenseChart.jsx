@@ -26,7 +26,22 @@ function formatAxis(n) {
   return `₱${n}`;
 }
 
-function buildChart(transactions, now = new Date()) {
+// true when viewport is below Tailwind's `sm` breakpoint (640px)
+function useIsMobile() {
+  const query = "(max-width: 639px)";
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(query).matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return isMobile;
+}
+
+function buildChart(transactions, labelStep = 3, now = new Date()) {
   const monthKey = format(now, "yyyy-MM");
   const daysInMonth = getDaysInMonth(now);
 
@@ -58,10 +73,13 @@ function buildChart(transactions, now = new Date()) {
   const highest = Math.max(0, ...days.map((d) => Math.max(d.income, d.expense)));
   const maxValue = niceMax(highest);
 
-  // X-axis labels every 3 days, plus the last day if it isn't too close
+  // X-axis labels every `labelStep` days, plus the last day if it isn't too close
   const labelDays = [];
-  for (let d = 1; d <= daysInMonth; d += 3) labelDays.push(d);
-  if (daysInMonth - labelDays[labelDays.length - 1] >= 2) {
+  for (let d = 1; d <= daysInMonth; d += labelStep) labelDays.push(d);
+  if (
+    daysInMonth - labelDays[labelDays.length - 1] >=
+    Math.round(labelStep * 0.7)
+  ) {
     labelDays.push(daysInMonth);
   }
 
@@ -94,7 +112,11 @@ export default function IncomeExpenseChart() {
       .finally(() => setIsLoading(false));
   }, [supabase, user]);
 
-  const chart = useMemo(() => buildChart(transactions), [transactions]);
+  const isMobile = useIsMobile();
+  const chart = useMemo(
+    () => buildChart(transactions, isMobile ? 7 : 3),
+    [transactions, isMobile]
+  );
   const {
     days,
     daysInMonth,
@@ -119,7 +141,7 @@ export default function IncomeExpenseChart() {
   }));
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
       {/* Header */}
       <div>
         <h2 className="text-base font-semibold text-slate-800">
@@ -127,7 +149,7 @@ export default function IncomeExpenseChart() {
         </h2>
 
         {/* Legend */}
-        <div className="mt-5 flex items-center gap-5">
+        <div className="mt-4 flex items-center gap-5 sm:mt-5">
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-4 rounded-sm bg-emerald-500" />
             <span className="text-xs font-medium text-slate-600">Income</span>
@@ -141,7 +163,7 @@ export default function IncomeExpenseChart() {
       </div>
 
       {/* Chart + Summary */}
-      <div className="mt-4 flex gap-6">
+      <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:gap-6">
         {/* Chart */}
         <div className="min-w-0 flex-1">
           <div className="flex">
@@ -171,7 +193,7 @@ export default function IncomeExpenseChart() {
               </div>
 
               {/* Bars */}
-              <div className="absolute inset-0 flex items-end justify-between gap-[2px] px-1">
+              <div className="absolute inset-0 flex items-end justify-between gap-px px-1">
                 {days.map((item) => {
                   const incomeHeight = (item.income / maxValue) * 100;
                   const expenseHeight = (item.expense / maxValue) * 100;
@@ -179,11 +201,11 @@ export default function IncomeExpenseChart() {
                   return (
                     <div
                       key={item.day}
-                      className="flex h-full flex-1 items-end justify-center gap-[2px]"
+                      className="flex h-full min-w-0 flex-1 items-end justify-center gap-px"
                     >
                       {/* Income */}
                       <div
-                        className="w-[5px] rounded-t-sm bg-emerald-500 transition-all duration-300 hover:opacity-75"
+                        className="w-full max-w-[5px] flex-1 rounded-t-sm bg-emerald-500 transition-all duration-300 hover:opacity-75"
                         style={{ height: `${incomeHeight}%` }}
                         title={`${monthLabel} ${item.day}: Income ${formatPeso(
                           item.income
@@ -192,7 +214,7 @@ export default function IncomeExpenseChart() {
 
                       {/* Expense */}
                       <div
-                        className="w-[5px] rounded-t-sm bg-red-500 transition-all duration-300 hover:opacity-75"
+                        className="w-full max-w-[5px] flex-1 rounded-t-sm bg-red-500 transition-all duration-300 hover:opacity-75"
                         style={{ height: `${expenseHeight}%` }}
                         title={`${monthLabel} ${item.day}: Expense ${formatPeso(
                           item.expense
@@ -231,29 +253,29 @@ export default function IncomeExpenseChart() {
         </div>
 
         {/* Summary Panel */}
-        <div className="flex w-[150px] shrink-0 items-center">
-          <div className="w-full rounded-lg border border-gray-100 bg-slate-50/50 p-4">
+        <div className="flex w-full shrink-0 items-center lg:w-[150px]">
+          <div className="grid w-full grid-cols-3 gap-3 rounded-lg border border-gray-100 bg-slate-50/50 p-3 sm:p-4 lg:block">
             {/* Total Income */}
             <div>
               <p className="text-[11px] text-slate-500">Total Income</p>
-              <p className="mt-1 text-sm font-semibold text-emerald-500">
+              <p className="mt-1 break-words text-xs font-semibold text-emerald-500 sm:text-sm">
                 {formatPeso(totalIncome)}
               </p>
             </div>
 
             {/* Total Expenses */}
-            <div className="mt-5">
+            <div className="lg:mt-5">
               <p className="text-[11px] text-slate-500">Total Expenses</p>
-              <p className="mt-1 text-sm font-semibold text-red-500">
+              <p className="mt-1 break-words text-xs font-semibold text-red-500 sm:text-sm">
                 {formatPeso(totalExpenses)}
               </p>
             </div>
 
             {/* Net Savings */}
-            <div className="mt-5">
+            <div className="lg:mt-5">
               <p className="text-[11px] text-slate-500">Net Savings</p>
               <p
-                className={`mt-1 text-sm font-semibold ${
+                className={`mt-1 break-words text-xs font-semibold sm:text-sm ${
                   netSavings < 0 ? "text-red-500" : "text-blue-600"
                 }`}
               >

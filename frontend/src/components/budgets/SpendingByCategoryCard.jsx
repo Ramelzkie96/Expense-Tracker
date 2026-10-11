@@ -9,7 +9,7 @@ export default function SpendingByCategoryCard({ categories, totalSpent }) {
   }));
 
   return (
-    <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <h3 className="mb-5 text-[16px] font-bold text-slate-800">
         Spending by Category
       </h3>
@@ -19,7 +19,7 @@ export default function SpendingByCategoryCard({ categories, totalSpent }) {
           No expenses recorded this month.
         </p>
       ) : (
-        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center">
+        <div className="flex flex-col items-center gap-6 sm:gap-8 lg:flex-row lg:items-center">
           {/* Donut */}
           <div className="relative shrink-0" style={{ width: 220, height: 220 }}>
             <PieChart width={220} height={220}>
@@ -51,12 +51,12 @@ export default function SpendingByCategoryCard({ categories, totalSpent }) {
           </div>
 
           {/* Legend */}
-          <div className="w-full flex-1 space-y-3.5">
+          <div className="w-full min-w-0 flex-1 space-y-4">
             {categories.map((c) => {
               const Icon = c.icon;
               const pct = totalSpent ? Math.round((c.spent / totalSpent) * 100) : 0;
               return (
-                <div key={c.id} className="flex items-center gap-3">
+                <div key={c.id} className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                   <span
                     className="h-2.5 w-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: c.color }}
@@ -68,17 +68,20 @@ export default function SpendingByCategoryCard({ categories, totalSpent }) {
                     <Icon size={13} strokeWidth={2} className={c.iconColor} />
                   </div>
 
-                  <span className="w-[130px] shrink-0 truncate text-[13.5px] font-medium text-slate-700">
+                  <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-slate-700 sm:w-[130px] sm:flex-none">
                     {c.name}
                   </span>
 
-                  <span className="w-[85px] shrink-0 text-[13.5px] font-semibold text-slate-800">
+                  <span className="shrink-0 text-[13.5px] font-semibold text-slate-800 sm:w-[85px]">
                     {formatPesoPlain(c.spent)}
                   </span>
 
-                  <span className="w-9 shrink-0 text-[12.5px] text-slate-500">{pct}%</span>
+                  <span className="w-9 shrink-0 text-right text-[12.5px] text-slate-500 sm:text-left">
+                    {pct}%
+                  </span>
 
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                  {/* Bar drops to its own full-width line when space is tight */}
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 sm:w-auto sm:min-w-[60px] sm:flex-1">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${pct}%`, backgroundColor: c.color }}

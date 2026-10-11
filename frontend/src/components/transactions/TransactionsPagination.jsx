@@ -43,12 +43,12 @@ export default function TransactionsPagination({
   const pageList = buildPageList(page, totalPages);
 
   return (
-    <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-      <p className="text-[13px] text-slate-500">
+    <div className="mt-5 flex flex-col items-center gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:justify-between">
+      <p className="text-center text-[12.5px] text-slate-500 sm:text-left sm:text-[13px]">
         Showing {startIndex} to {endIndex} of {totalResults} transactions
       </p>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center justify-center gap-1.5">
         <button
           onClick={() => onPageChange(Math.max(1, page - 1))}
           className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
