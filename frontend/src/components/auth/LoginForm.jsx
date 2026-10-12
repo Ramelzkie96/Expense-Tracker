@@ -60,8 +60,8 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex w-full flex-col justify-center p-8 lg:w-[380px]">
-      <h1 className="text-[24px] font-bold text-slate-800">Welcome Back!</h1>
+    <div className="flex w-full flex-col justify-center p-5 sm:p-8 lg:w-[380px]">
+      <h1 className="text-[22px] font-bold text-slate-800 sm:text-[24px]">Welcome Back!</h1>
       <p className="mt-1 mb-6 text-[13.5px] text-slate-500">
         Sign in to your account to continue managing your finances.
       </p>
@@ -83,7 +83,7 @@ export default function LoginForm() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
+              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[16px] sm:text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
             />
           </div>
         </div>
@@ -96,7 +96,7 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <label className="flex items-center gap-2 text-[13px] text-slate-600">
             <input
               type="checkbox"

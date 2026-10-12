@@ -55,8 +55,8 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex w-full flex-col justify-center p-8 lg:w-[380px]">
-      <h1 className="text-[24px] font-bold text-slate-800">Create Your Account</h1>
+    <div className="flex w-full flex-col justify-center p-5 sm:p-8 lg:w-[380px]">
+      <h1 className="text-[22px] font-bold text-slate-800 sm:text-[24px]">Create Your Account</h1>
       <p className="mt-1 mb-6 text-[13.5px] text-slate-500">
         Join Expense Tracker and start your journey to better financial health.
       </p>
@@ -78,7 +78,7 @@ export default function SignupForm() {
               placeholder="John Doe"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
+              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[16px] sm:text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
             />
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function SignupForm() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
+              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[16px] sm:text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function SignupForm() {
               placeholder="+63 9XX XXX XXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
+              className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-[16px] sm:text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
             />
           </div>
         </div>

@@ -24,7 +24,7 @@ export default function PasswordInput({ label, required, placeholder, value, onC
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-10 text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
+          className="h-[42px] w-full rounded-lg border border-slate-200 bg-white pl-9 pr-10 text-[16px] sm:text-[13.5px] text-slate-700 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400"
         />
         <button
           type="button"
